@@ -1,11 +1,13 @@
 import * as THREE from "./lib/three.module.js";
-
+import { OrbitControls } from "./lib/OrbitControls.js";
+import Stats from "./lib/stats.module.js";
 
 export default class Main{
 
     constructor() {
 
-        this.update = this.update.bind(this)//resoult le pb de reference this
+        this.update = this.update.bind(this);//resoult le pb de reference this
+        this.onResize = this.onResize.bind(this);
 
         this.scene;//variable scene
         this.camera;//variable camera
@@ -26,7 +28,7 @@ export default class Main{
                 le far = limite loitaine (au dessus de la valeur ne sera pas visible)
          */
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000);
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({alpha:true, antialias: true});//alpha -> passe la scene en transparent, antialias permet d'éviter les pixels sur les bords
         this.renderer.setSize(window.innerWidth, window.innerHeight);//initialise la taille de la scene
 
         //creation d'un cube
@@ -36,19 +38,38 @@ export default class Main{
         this.scene.add(this.cube);
 
          this.camera.position.z = 2;//on recule la camera pour voir le cube
-        // this.cube.rotation.y = Math.PI/4;//permet la rotation du cube
+        // this.cube.rotation.y = Math.PI/4;//permet de voir le cube en 3/4
+
+        window.addEventListener('resize', this.onResize, false);
 
         document.body.appendChild(this.renderer.domElement);//si on indique pas de balise caméra le renderer créer une camera par défaut et on l'injecte via cette ligne
 
+
+        this.stats = new Stats();
+        document.body.appendChild(this.stats.dom);//permet d'afficher les stats fps
+        new OrbitControls(this.camera, this.renderer.domElement);//permet de controler la forme via la souris
+
         this.update();
+    }
+
+    onResize(){//permet de resizer automatiquement la scene en fonction de la taille de la fenêtre
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height);
     }
 
     update(){
 
         requestAnimationFrame(this.update);
-        this.cube.rotation.y += 0.01; //va creer une rotation perpetuelle autours de l'axe Y
+        // this.cube.rotation.y += 0.01; //va creer une rotation perpetuelle autours de l'axe Y
 
         this.renderer.render(this.scene, this.camera);//on rend la scene via la camera
+
+        // this.orbitControls.update();
+        this.stats.update();
     }
 
 }
