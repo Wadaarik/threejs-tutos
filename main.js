@@ -1,6 +1,7 @@
 import * as THREE from "./lib/three.module.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
 import Stats from "./lib/stats.module.js";
+import Objects from "./objects.js";
 
 export default class Main{
 
@@ -28,14 +29,14 @@ export default class Main{
                 le far = limite loitaine (au dessus de la valeur ne sera pas visible)
          */
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000);
-        this.renderer = new THREE.WebGLRenderer({alpha:true, antialias: true});//alpha -> passe la scene en transparent, antialias permet d'éviter les pixels sur les bords
+        this.renderer = new THREE.WebGLRenderer({antialias: true});//alpha -> passe la scene en transparent, antialias permet d'éviter les pixels sur les bords
         this.renderer.setSize(window.innerWidth, window.innerHeight);//initialise la taille de la scene
 
         //creation d'un cube
-        const geometry = new THREE.BoxGeometry();
-        const material = new THREE.MeshBasicMaterial({ color: 0xff000 });
-        this.cube = new THREE.Mesh(geometry, material);
-        this.scene.add(this.cube);
+        // const geometry = new THREE.BoxGeometry();
+        // const material = new THREE.MeshBasicMaterial({ color: 0xff000 });
+        // this.cube = new THREE.Mesh(geometry, material);
+        // this.scene.add(this.cube);
 
          this.camera.position.z = 2;//on recule la camera pour voir le cube
         // this.cube.rotation.y = Math.PI/4;//permet de voir le cube en 3/4
@@ -50,6 +51,13 @@ export default class Main{
         new OrbitControls(this.camera, this.renderer.domElement);//permet de controler la forme via la souris
 
         this.update();
+
+        this.initObjects();
+    }
+
+    initObjects(){
+        this.objects = new Objects();
+        this.scene.add(this.objects);
     }
 
     onResize(){//permet de resizer automatiquement la scene en fonction de la taille de la fenêtre
