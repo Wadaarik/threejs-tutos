@@ -2,6 +2,7 @@ import * as THREE from "./lib/three.module.js";
 import { OrbitControls } from "./lib/OrbitControls.js";
 import Stats from "./lib/stats.module.js";
 import Objects from "./objects.js";
+import Mesh1 from "./mesh1.js";
 
 export default class Main{
 
@@ -39,6 +40,7 @@ export default class Main{
         // this.scene.add(this.cube);
 
          this.camera.position.z = 2;//on recule la camera pour voir le cube
+         this.camera.position.y = 1;
         // this.cube.rotation.y = Math.PI/4;//permet de voir le cube en 3/4
 
         window.addEventListener('resize', this.onResize, false);
@@ -56,8 +58,21 @@ export default class Main{
     }
 
     initObjects(){
+
+        this.dlight = new THREE.DirectionalLight();//creer une directional light
+        this.dlight.position.z = 5;
+        this.dlight.position.x = 5;
+        this.dlight.position.y = 5;
+        this.scene.add(this.dlight);
+
+        this.helper = new THREE.DirectionalLightHelper(this.dlight, 1);//permet de voir où se trouve la directional light
+        this.scene.add(this.helper);
+
         this.objects = new Objects();
         this.scene.add(this.objects);
+
+        this.corn = new Mesh1();
+        this.scene.add(this.corn);
     }
 
     onResize(){//permet de resizer automatiquement la scene en fonction de la taille de la fenêtre
@@ -73,6 +88,9 @@ export default class Main{
 
         requestAnimationFrame(this.update);
         // this.cube.rotation.y += 0.01; //va creer une rotation perpetuelle autours de l'axe Y
+
+        this.dlight && (this.dlight.position.x += -0.01);
+        this.helper && this.helper.update();
 
         this.renderer.render(this.scene, this.camera);//on rend la scene via la camera
 

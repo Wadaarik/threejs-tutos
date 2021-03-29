@@ -9,15 +9,16 @@ export default class Objects extends THREE.Object3D{
         super();
 
         this.boxGeometry = new THREE.BoxGeometry(.5,.5,.5);
-        const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
 
         this.sphereGeometry = new THREE.SphereGeometry(.3, 12, 12);
-        const greenMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const greenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
         this.planGeometry = new THREE.PlaneGeometry(3, 3);
-        const whiteMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side : THREE.DoubleSide });
+        const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side : THREE.DoubleSide });
 
         this.boxMesh = new THREE.Mesh(this.boxGeometry, redMaterial);
+        this.boxMesh.position.x = 1;
 
         // var clone = this.boxMesh.clone();//clone un cube
         // clone.position.x = 1;
@@ -34,7 +35,6 @@ export default class Objects extends THREE.Object3D{
 
         this.planMesh = new THREE.Mesh(this.planGeometry, whiteMaterial);
         this.planMesh.rotation.x = THREE.Math.degToRad(-90);
-        this.planMesh.position.y = -1;
 
         this.add(this.boxMesh);
         this.add(this.planMesh);
