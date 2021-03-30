@@ -31,6 +31,7 @@ export default class Main{
          */
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000);
         this.renderer = new THREE.WebGLRenderer({antialias: true});//alpha -> passe la scene en transparent, antialias permet d'éviter les pixels sur les bords
+        this.renderer.shadowMap.enabled = true; //active l'ombre
         this.renderer.setSize(window.innerWidth, window.innerHeight);//initialise la taille de la scene
 
         //creation d'un cube
@@ -63,7 +64,15 @@ export default class Main{
         this.dlight.position.z = 5;
         this.dlight.position.x = 5;
         this.dlight.position.y = 5;
+        this.dlight.castShadow = true;//active l'ombre pour la light
+        this.dlight.shadow.mapSize.width = 2048;
+        this.dlight.shadow.mapSize.height = 2048;
+        this.dlight.shadow.bias = -0.0001;
         this.scene.add(this.dlight);
+
+        this.alight = new THREE.AmbientLight();
+        this.alight.intensity = .2;
+        this.scene.add(this.alight);
 
         this.helper = new THREE.DirectionalLightHelper(this.dlight, 1);//permet de voir où se trouve la directional light
         this.scene.add(this.helper);
@@ -91,6 +100,8 @@ export default class Main{
 
         this.dlight && (this.dlight.position.x += -0.01);
         this.helper && this.helper.update();
+
+        this.objects && this.objects.update();
 
         this.renderer.render(this.scene, this.camera);//on rend la scene via la camera
 

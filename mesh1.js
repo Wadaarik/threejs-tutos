@@ -6,7 +6,9 @@ export default class Mesh1 extends THREE.Object3D{
     constructor() {
         super();
 
-        const blueMaterial = new THREE.MeshStandardMaterial({color: 0x0000ff});//MeshStandardMaterial prend en charge l'impact d'une light
+        this.update = this.update.bind(this);
+
+        const blueMaterial = new THREE.MeshStandardMaterial({color: 0x0000ff, side: THREE.DoubleSide});//MeshStandardMaterial prend en charge l'impact d'une light
         // const redMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
 
         const loader = new GLTFLoader();
@@ -22,6 +24,8 @@ export default class Mesh1 extends THREE.Object3D{
                      child.position.set(0, 0, 0);
                      child.rotation.x = Math.PI / 180;
                      child.material = blueMaterial;
+                     child.castShadow = true;
+                     child.receiveShadow = true;
                      this.add(child);
 
                      // switch (child.name){//si on merge 2 éléments dans un meme projet
@@ -59,5 +63,11 @@ export default class Mesh1 extends THREE.Object3D{
 
 
     }
+
+    update(){
+
+
+    }
+
 
 }

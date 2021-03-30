@@ -8,32 +8,40 @@ export default class Objects extends THREE.Object3D{
 
         super();
 
+        this.update = this.update.bind(this);
+
         this.boxGeometry = new THREE.BoxGeometry(.5,.5,.5);
         const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
 
-        this.sphereGeometry = new THREE.SphereGeometry(.3, 12, 12);
+        this.sphereGeometry = new THREE.SphereGeometry(.3, 24, 24);
         const greenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
-        this.planGeometry = new THREE.PlaneGeometry(3, 3);
+        this.planGeometry = new THREE.PlaneGeometry(5, 5);
         const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side : THREE.DoubleSide });
 
         this.boxMesh = new THREE.Mesh(this.boxGeometry, redMaterial);
+        this.boxMesh.castShadow = true;
+        this.boxMesh.receiveShadow = true;
         this.boxMesh.position.x = 1;
+        this.boxMesh.position.y = .5;
 
         // var clone = this.boxMesh.clone();//clone un cube
         // clone.position.x = 1;
         // this.scene.add(clone);
-
         // this.boxMesh.material.color = new THREE.Color(0x0000ff);//change la couleur du cube
         // this.boxMesh.rotation.y = THREE.Math.degToRad(45);//rotation du cube
         // this.boxMesh.visible = flase //rend le cube invisible
 
 
         this.sphereMesh = new THREE.Mesh(this.sphereGeometry, greenMaterial);
+        this.sphereMesh.castShadow = true; //la sphere cast les ombres
+        this.sphereMesh.receiveShadow = true; //la sphere accepte de recevoir les ombres
         this.sphereMesh.position.x = -1;//position de la sphere
+        this.sphereMesh.position.y = .4;
         // this.sphereMesh.scale.set(.1,.1,.1);//scale de la sphere
 
         this.planMesh = new THREE.Mesh(this.planGeometry, whiteMaterial);
+        this.planMesh.receiveShadow = true; //le plan accepte de recevoir les ombres
         this.planMesh.rotation.x = THREE.Math.degToRad(-90);
 
         this.add(this.boxMesh);
@@ -45,7 +53,9 @@ export default class Objects extends THREE.Object3D{
         // this.groupe.position.x = -1;
         // this.groupe.rotation.x = THREE.Math.degToRad(-30);
         // this.groupe.scale.y = .3;
+    }
 
-
+    update(){
+        this.boxMesh.rotation.x += THREE.Math.degToRad(1);
     }
 }
