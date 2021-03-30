@@ -16,8 +16,17 @@ export default class Objects extends THREE.Object3D{
         this.sphereGeometry = new THREE.SphereGeometry(.3, 24, 24);
         const greenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 
+        this.planeMap = new THREE.TextureLoader().load("./assets/sol.jpg");//import la texture
+        this.planeMap.anisotropy = 12;
+        this.planeMap.wrapS = this.planeMap.wrapT = THREE.RepeatWrapping;//appelle la fonction repeat
+        this.planeMap.repeat.set(5,5);//repete la texture
+        // this.planeMap.offset.set(.5,.5);//deplace la texture
+        // this.planeMap.rotation = THREE.Math.degToRad(30);//rotation de la texture
+
         this.planGeometry = new THREE.PlaneGeometry(5, 5);
         const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side : THREE.DoubleSide });
+
+        whiteMaterial.map = this.planeMap;
 
         this.boxMesh = new THREE.Mesh(this.boxGeometry, redMaterial);
         this.boxMesh.castShadow = true;
@@ -57,5 +66,7 @@ export default class Objects extends THREE.Object3D{
 
     update(){
         this.boxMesh.rotation.x += THREE.Math.degToRad(1);
+
+        // this.planeMap.offset.x += -0.01;//anime la texture
     }
 }
