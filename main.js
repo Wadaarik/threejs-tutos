@@ -21,6 +21,12 @@ export default class Main{
     init(){//initialise la scene
 
         this.scene = new THREE.Scene();
+
+        //this.scene.background = new THREE.Color(0x6ee7ff);
+
+        //Brouillard
+        this.scene.fog = new THREE.FogExp2(0x424347, 0.1);
+
         /*
             La perspective camera donne une vue 3D où les entités lointaines semblent plus petites que les entités proches.
             La PerspectiveCamerapossède 4 param
@@ -33,6 +39,11 @@ export default class Main{
         this.renderer = new THREE.WebGLRenderer({antialias: true});//alpha -> passe la scene en transparent, antialias permet d'éviter les pixels sur les bords
         this.renderer.shadowMap.enabled = true; //active l'ombre
         this.renderer.setSize(window.innerWidth, window.innerHeight);//initialise la taille de la scene
+
+        this.skyTexture= new THREE.TextureLoader().load("./assets/background.jpg", ()=>{//créer le background
+            this.skyEquipMap = new THREE.WebGLCubeRenderTarget(1024).fromEquirectangularTexture(this.renderer, this.skyTexture);
+            this.scene.background = this.skyEquipMap;
+        });
 
         //creation d'un cube
         // const geometry = new THREE.BoxGeometry();
@@ -71,7 +82,7 @@ export default class Main{
         this.scene.add(this.dlight);
 
         this.alight = new THREE.AmbientLight();
-        this.alight.intensity = .2;
+        this.alight.intensity = .4;
         this.scene.add(this.alight);
 
         this.helper = new THREE.DirectionalLightHelper(this.dlight, 1);//permet de voir où se trouve la directional light

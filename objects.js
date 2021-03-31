@@ -19,11 +19,11 @@ export default class Objects extends THREE.Object3D{
         this.planeMap = new THREE.TextureLoader().load("./assets/sol.jpg");//import la texture
         this.planeMap.anisotropy = 12;
         this.planeMap.wrapS = this.planeMap.wrapT = THREE.RepeatWrapping;//appelle la fonction repeat
-        this.planeMap.repeat.set(5,5);//repete la texture
+        this.planeMap.repeat.set(20,20);//repete la texture
         // this.planeMap.offset.set(.5,.5);//deplace la texture
         // this.planeMap.rotation = THREE.Math.degToRad(30);//rotation de la texture
 
-        this.planGeometry = new THREE.PlaneGeometry(5, 5);
+        this.planGeometry = new THREE.PlaneGeometry(50, 50);
         const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side : THREE.DoubleSide });
 
         whiteMaterial.map = this.planeMap;
