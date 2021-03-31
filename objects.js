@@ -1,6 +1,6 @@
 import * as THREE from "./lib/three.module.js";
+import Global from "./global.js";
 
-console.log('Hello');
 
 export default class Objects extends THREE.Object3D{
 
@@ -11,10 +11,17 @@ export default class Objects extends THREE.Object3D{
         this.update = this.update.bind(this);
 
         this.boxGeometry = new THREE.BoxGeometry(.5,.5,.5);
-        const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const redMaterial = new THREE.MeshStandardMaterial({ color: 0xfffff, side: THREE.DoubleSide });
+        // redMaterial.map = new THREE.TextureLoader().load("./assets/watermelon.png");
+        // redMaterial.transparent = true;
+        redMaterial.metalness = .5;
+        redMaterial.roughness = .1;
+        redMaterial.envMap = Global.instance.envMap;
+        redMaterial.envMapIntensity = .3;
+
 
         this.sphereGeometry = new THREE.SphereGeometry(.3, 24, 24);
-        const greenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+        const greenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
 
         this.planeMap = new THREE.TextureLoader().load("./assets/sol.jpg");//import la texture
         this.planeMap.anisotropy = 12;
@@ -65,7 +72,7 @@ export default class Objects extends THREE.Object3D{
     }
 
     update(){
-        this.boxMesh.rotation.x += THREE.Math.degToRad(1);
+        // this.boxMesh.rotation.x += THREE.Math.degToRad(1);
 
         // this.planeMap.offset.x += -0.01;//anime la texture
     }

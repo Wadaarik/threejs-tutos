@@ -3,6 +3,7 @@ import { OrbitControls } from "./lib/OrbitControls.js";
 import Stats from "./lib/stats.module.js";
 import Objects from "./objects.js";
 import Mesh1 from "./mesh1.js";
+import Global from "./global.js";
 
 export default class Main{
 
@@ -42,7 +43,10 @@ export default class Main{
 
         this.skyTexture= new THREE.TextureLoader().load("./assets/background.jpg", ()=>{//créer le background
             this.skyEquipMap = new THREE.WebGLCubeRenderTarget(1024).fromEquirectangularTexture(this.renderer, this.skyTexture);
+            Global.instance.envMap = this.skyEquipMap;//instancie les futurs materiaux via singleton
             this.scene.background = this.skyEquipMap;
+
+            this.initObjects();
         });
 
         //creation d'un cube
@@ -66,7 +70,6 @@ export default class Main{
 
         this.update();
 
-        this.initObjects();
     }
 
     initObjects(){
@@ -109,7 +112,7 @@ export default class Main{
         requestAnimationFrame(this.update);
         // this.cube.rotation.y += 0.01; //va creer une rotation perpetuelle autours de l'axe Y
 
-        this.dlight && (this.dlight.position.x += -0.01);
+        // this.dlight && (this.dlight.position.x += -0.01);
         this.helper && this.helper.update();
 
         this.objects && this.objects.update();
