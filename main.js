@@ -11,6 +11,14 @@ export default class Main{
 
         this.update = this.update.bind(this);//resoult le pb de reference this
         this.onResize = this.onResize.bind(this);
+        this.initEvents = this.initEvents.bind(this);
+        this.onMove = this.onMove.bind(this);
+        this.onDown = this.onDown.bind(this);
+        this.onUp = this.onUp.bind(this);
+        this.findIntersction = this.findIntersction.bind(this);
+
+        this.mouse = new THREE.Vector2();
+        this.raycaster = new THREE.Raycaster();
 
         this.scene;//variable scene
         this.camera;//variable camera
@@ -66,9 +74,42 @@ export default class Main{
 
         this.stats = new Stats();
         document.body.appendChild(this.stats.dom);//permet d'afficher les stats fps
-        new OrbitControls(this.camera, this.renderer.domElement);//permet de controler la forme via la souris
+        this.orbital = new OrbitControls(this.camera, this.renderer.domElement);//permet de controler la forme via la souris
+        this.orbital.maxPolarAngle  = THREE.Math.degToRad(86);//bloque la caméra au niveau du plan
+
 
         this.update();
+        this.initEvents();
+    }
+
+    initEvents(){
+        this.renderer.domElement.addEventListener("mousemove", this.onMove, false);
+        document.body.addEventListener("pointerdown", this.onDown, false);
+        document.body.addEventListener("pointerup", this.onUp, false);
+    }
+    onMove(event){
+        event.preventDefault();
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    }
+    onDown(event){
+        event.preventDefault();
+    }
+    onUp(event){
+        event.preventDefault();
+    }
+
+    findIntersction(){//fonction qui intercepte les objets
+
+        this.camera.updateMatrixWorld();//prend en compte toutes les nouvelles modifs de la caméra
+
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+
+        const intersects = this.raycaster.intersectObjects(this.objects.children);
+
+        if (intersects.length > 0){
+            console.log(intersects[0].object.name);//log le nom des objets ciblés
+        }
 
     }
 
@@ -88,14 +129,14 @@ export default class Main{
         this.alight.intensity = .4;
         this.scene.add(this.alight);
 
-        this.helper = new THREE.DirectionalLightHelper(this.dlight, 1);//permet de voir où se trouve la directional light
-        this.scene.add(this.helper);
+        //this.helper = new THREE.DirectionalLightHelper(this.dlight, 1);//permet de voir où se trouve la directional light
+        //this.scene.add(this.helper);
 
         this.objects = new Objects();
         this.scene.add(this.objects);
 
-        this.corn = new Mesh1();
-        this.scene.add(this.corn);
+        this.mesh1 = new Mesh1();
+        this.scene.add(this.mesh1);
     }
 
     onResize(){//permet de resizer automatiquement la scene en fonction de la taille de la fenêtre
@@ -111,11 +152,14 @@ export default class Main{
 
         requestAnimationFrame(this.update);
         // this.cube.rotation.y += 0.01; //va creer une rotation perpetuelle autours de l'axe Y
+        // this.mesh1.rotation.y += .05; //va creer une rotation perpetuelle autours de l'axe Y
 
         // this.dlight && (this.dlight.position.x += -0.01);
-        this.helper && this.helper.update();
+        // this.helper && this.helper.update();
 
         this.objects && this.objects.update();
+
+        this.objects && this.findIntersction();
 
         this.renderer.render(this.scene, this.camera);//on rend la scene via la camera
 

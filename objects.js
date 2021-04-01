@@ -11,17 +11,35 @@ export default class Objects extends THREE.Object3D{
         this.update = this.update.bind(this);
 
         this.boxGeometry = new THREE.BoxGeometry(.5,.5,.5);
-        const redMaterial = new THREE.MeshStandardMaterial({ color: 0xfffff, side: THREE.DoubleSide });
+        const redMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide });
         // redMaterial.map = new THREE.TextureLoader().load("./assets/watermelon.png");
         // redMaterial.transparent = true;
-        redMaterial.metalness = .5;
-        redMaterial.roughness = .1;
+        redMaterial.metalness = 1;
+        redMaterial.roughness = 1;
         redMaterial.envMap = Global.instance.envMap;
         redMaterial.envMapIntensity = .3;
+        redMaterial.map = new THREE.TextureLoader().load("./assets/marble_jpg/marble_01_AO_1k.jpg");
+        redMaterial.map.anisotropy = 12;
+        redMaterial.normalMap = new THREE.TextureLoader().load("./assets/marble_png/marble_01_nor_1k.png");
+        redMaterial.normalScale.set(.2, .2);
+        redMaterial.roughnessMap = new THREE.TextureLoader().load("./assets/marble_jpg/marble_01_rough_1k.jpg");
+        redMaterial.metalnessMap = new THREE.TextureLoader().load("./assets/marble_jpg/marble_01_spec_1k.jpg");
 
 
         this.sphereGeometry = new THREE.SphereGeometry(.3, 24, 24);
-        const greenMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
+        const greenMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+        greenMaterial.metalness = .1;
+        greenMaterial.roughness = .4;
+        greenMaterial.map = new THREE.TextureLoader().load("./assets/snow_jpg/snow_field_aerial_AO_1k.jpg");
+        greenMaterial.map.anisotropy = 12;
+        greenMaterial.map.wrapS = greenMaterial.map.wrapT = THREE.RepeatWrapping;//repete la texture
+        greenMaterial.map.repeat.set(3, 1);
+        greenMaterial.normalMap = new THREE.TextureLoader().load("./assets/snow_png/snow_field_aerial_nor_1k.png");
+        greenMaterial.normalMap.wrapS = greenMaterial.map.wrapT = THREE.RepeatWrapping;//repete la texture
+        greenMaterial.normalMap.repeat.set(3, 1);
+        greenMaterial.envMap = Global.instance.envMap;
+        greenMaterial.envMapIntensity = .4;
+
 
         this.planeMap = new THREE.TextureLoader().load("./assets/sol.jpg");//import la texture
         this.planeMap.anisotropy = 12;
@@ -40,6 +58,7 @@ export default class Objects extends THREE.Object3D{
         this.boxMesh.receiveShadow = true;
         this.boxMesh.position.x = 1;
         this.boxMesh.position.y = .5;
+        this.boxMesh.name = "box";
 
         // var clone = this.boxMesh.clone();//clone un cube
         // clone.position.x = 1;
@@ -54,11 +73,13 @@ export default class Objects extends THREE.Object3D{
         this.sphereMesh.receiveShadow = true; //la sphere accepte de recevoir les ombres
         this.sphereMesh.position.x = -1;//position de la sphere
         this.sphereMesh.position.y = .4;
+        this.sphereMesh.name = "sphere";
         // this.sphereMesh.scale.set(.1,.1,.1);//scale de la sphere
 
         this.planMesh = new THREE.Mesh(this.planGeometry, whiteMaterial);
         this.planMesh.receiveShadow = true; //le plan accepte de recevoir les ombres
         this.planMesh.rotation.x = THREE.Math.degToRad(-90);
+        this.planMesh.name = "plan";
 
         this.add(this.boxMesh);
         this.add(this.planMesh);
@@ -73,6 +94,7 @@ export default class Objects extends THREE.Object3D{
 
     update(){
         // this.boxMesh.rotation.x += THREE.Math.degToRad(1);
+        // this.boxMesh.rotation.y += THREE.Math.degToRad(1);
 
         // this.planeMap.offset.x += -0.01;//anime la texture
     }
