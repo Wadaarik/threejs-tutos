@@ -16,6 +16,7 @@ export default class Main{
         this.onDown = this.onDown.bind(this);
         this.onUp = this.onUp.bind(this);
         this.findIntersction = this.findIntersction.bind(this);
+        this.initPhysics = this.initPhysics.bind(this);
 
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
@@ -55,6 +56,7 @@ export default class Main{
             Global.instance.envMap = this.skyEquipMap;//instancie les futurs materiaux via singleton
             this.scene.background = this.skyEquipMap;
 
+            this.initPhysics();
             this.initObjects();
         });
 
@@ -127,6 +129,16 @@ export default class Main{
 
     }
 
+    initPhysics(){
+        this.meshes = [];
+        this.bodys = [];
+        this.world = new CANNON.World();
+        this.world.gravity.set(0, - 9.8, 0);// m/s²
+        this.world.broadphase = new CANNON.SAPBroadphase(this.world);
+        this.frameRate = 60.0; //fps
+        this.fixedTimeStep = 1.0 / this.frameRate; // seconds
+    }
+
     initObjects(){
 
         this.dlight = new THREE.DirectionalLight();//creer une directional light
@@ -151,6 +163,57 @@ export default class Main{
 
         this.mesh1 = new Mesh1();
         this.scene.add(this.mesh1);
+
+
+        const GROUND_SIZE = {x:10, y: .1, z: 10};
+        var groundMat = new THREE.MeshPhongMaterial({ color: 0xcccccc});
+
+        this.ground = new THREE.Mesh(new THREE.BoxGeometry(GROUND_SIZE.x, GROUND_SIZE.y, GROUND_SIZE.z), groundMat);//création d'un cube appelé ground
+        this.ground.receiveShadow = true;
+        this.scene.add(this.ground);
+
+        this.addToWorld(this.ground, 0, new CANNON.Box(new CANNON.Vec3(GROUND_SIZE.x / 2, GROUND_SIZE.y / 2, GROUND_SIZE.z / 2)));//ajoute le cube dans le monde
+
+
+        const CUBE_SIZE = {x: .3, y: .3, z: .3};
+        var cubeMat = new THREE.MeshPhongMaterial({color: 0xcc0000});
+        this.cube = new THREE.Mesh(new THREE.BoxGeometry(CUBE_SIZE.x, CUBE_SIZE.y, CUBE_SIZE.z), cubeMat);//création d'un cube appelé ground
+        this.cube.receiveShadow = true;
+        this.cube.castShadow = true;
+        this.scene.add(this.cube);
+
+        // this.cube.position.y = 1;
+        // this.cube.position.z = 1;
+
+
+        var cubeBody = this.addToWorld(this.cube, 1, new CANNON.Box(new CANNON.Vec3(CUBE_SIZE.x / 2, CUBE_SIZE.y / 2, CUBE_SIZE.z / 2)));//ajoute le cube dans le monde
+        cubeBody.position.y = 1;
+        cubeBody.position.z = 1;
+        cubeBody.quaternion = new CANNON.Quaternion(THREE.Math.degToRad(30), THREE.Math.degToRad(30), THREE.Math.degToRad(30));
+
+
+
+    }
+
+    addToWorld(mesh, mass, shape){
+        var position = new CANNON.Vec3();
+        position.copy(mesh.position);
+
+        var quaternion = new CANNON.Quaternion();
+        quaternion.copy(mesh.quaternion);
+
+        var body = new CANNON.Body({//creer un body, donne une position et une quaterion du dessus, une shape et une masse
+           position: position,
+           quaternion: quaternion,
+           shape: shape,
+           mass: mass
+        });
+
+        this.world.addBody(body);
+        this.meshes.push(mesh);
+        this.bodys.push(body);
+
+        return body;
     }
 
     onResize(){//permet de resizer automatiquement la scene en fonction de la taille de la fenêtre
@@ -162,7 +225,7 @@ export default class Main{
         this.renderer.setSize(width, height);
     }
 
-    update(){
+    update(time){
 
         requestAnimationFrame(this.update);
         // this.cube.rotation.y += 0.01; //va creer une rotation perpetuelle autours de l'axe Y
@@ -179,6 +242,23 @@ export default class Main{
 
         // this.orbitControls.update();
         this.stats.update();
+
+
+        //CANNONJS
+        if (this.bodys){
+            for (let i=0; i<this.bodys.length; i++){//parcours le tableau body
+                if (this.bodys[i].world){//verifie que le body a un world (intégré à l'univers cannonjs)
+                    this.meshes[i].position.copy(this.bodys[i].position);//copy toutes les propriétés de son vecteur positions en mesh
+                    this.meshes[i].quaternion.copy(this.bodys[i].quaternion);//copy toutes les propriétés de son vecteur rotation (quaterion) en mesh
+                }
+            }
+            if (this.lastTime !== undefined){//met à jour cannonjs
+                var delta = (time - this.lastTime) / 1000;
+                this.world.step(this.fixedTimeStep, delta, this.frameRate);
+            }
+            this.lastTime = time;
+        }
+
     }
 
 }

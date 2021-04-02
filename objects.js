@@ -94,6 +94,10 @@ export default class Objects extends THREE.Object3D{
         // this.groupe.scale.y = .3;
     }
 
+    get ground(){
+        return this.planMesh;
+    }
+
     update(){
         // this.boxMesh.rotation.x += THREE.Math.degToRad(1);
         // this.boxMesh.rotation.y += THREE.Math.degToRad(1);
