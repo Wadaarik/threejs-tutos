@@ -59,6 +59,7 @@ export default class Objects extends THREE.Object3D{
         this.boxMesh.position.x = 1;
         this.boxMesh.position.y = .5;
         this.boxMesh.name = "box";
+        this.boxMesh.interaction = true;
 
         // var clone = this.boxMesh.clone();//clone un cube
         // clone.position.x = 1;
@@ -74,6 +75,7 @@ export default class Objects extends THREE.Object3D{
         this.sphereMesh.position.x = -1;//position de la sphere
         this.sphereMesh.position.y = .4;
         this.sphereMesh.name = "sphere";
+        this.sphereMesh.interaction = true;
         // this.sphereMesh.scale.set(.1,.1,.1);//scale de la sphere
 
         this.planMesh = new THREE.Mesh(this.planGeometry, whiteMaterial);

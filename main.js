@@ -19,6 +19,7 @@ export default class Main{
 
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
+        this.INTERSECTED;
 
         this.scene;//variable scene
         this.camera;//variable camera
@@ -94,9 +95,12 @@ export default class Main{
     }
     onDown(event){
         event.preventDefault();
+        this.INTERSECTED && this.INTERSECTED.interaction && (this.tween = TweenLite.to(this.INTERSECTED.scale, 2, {x: .5, y: .5, z: .5}));
     }
     onUp(event){
         event.preventDefault();
+        this.tween && this.tween.kill();
+        this.INTERSECTED && TweenLite.to(this.INTERSECTED.scale, 1, {x: 1, y: 1, z: 1, ease: "elastic.out(1, 0.3)"});
     }
 
     findIntersction(){//fonction qui intercepte les objets
@@ -108,7 +112,17 @@ export default class Main{
         const intersects = this.raycaster.intersectObjects(this.objects.children);
 
         if (intersects.length > 0){
-            console.log(intersects[0].object.name);//log le nom des objets ciblés
+
+            if ( this.INTERSECTED != intersects[0].object){//si il y a interaction avec l'objet alors augmente le scale, sinon null et scale normal
+
+                this.INTERSECTED && TweenLite.to(this.INTERSECTED.scale, .2, {x: 1, y: 1, z: 1});
+                this.INTERSECTED = intersects[0].object;
+                this.INTERSECTED.interaction && TweenLite.to(this.INTERSECTED.scale, .2, {x: 1.1, y: 1.1, z: 1.1});
+            }
+
+        }else {
+            this.INTERSECTED && TweenLite.to(this.INTERSECTED.scale, .2, {x: 1, y: 1, z: 1});
+            this.INTERSECTED = null;
         }
 
     }
