@@ -165,14 +165,13 @@ export default class Main{
         this.scene.add(this.mesh1);
 
 
-        const GROUND_SIZE = {x:10, y: .1, z: 10};
-        var groundMat = new THREE.MeshPhongMaterial({ color: 0xcccccc});
+        // const GROUND_SIZE = {x:10, y: .1, z: 10};
+        // var groundMat = new THREE.MeshPhongMaterial({ color: 0xcccccc});
+        // this.ground = new THREE.Mesh(new THREE.BoxGeometry(GROUND_SIZE.x, GROUND_SIZE.y, GROUND_SIZE.z), groundMat);//création d'un cube appelé ground
+        // this.ground.receiveShadow = true;
+        // this.scene.add(this.ground);
 
-        this.ground = new THREE.Mesh(new THREE.BoxGeometry(GROUND_SIZE.x, GROUND_SIZE.y, GROUND_SIZE.z), groundMat);//création d'un cube appelé ground
-        this.ground.receiveShadow = true;
-        this.scene.add(this.ground);
-
-        this.addToWorld(this.ground, 0, new CANNON.Box(new CANNON.Vec3(GROUND_SIZE.x / 2, GROUND_SIZE.y / 2, GROUND_SIZE.z / 2)));//ajoute le cube dans le monde
+        this.addToWorld(this.objects.ground, 0, new CANNON.Plane());//ajoute le cube dans le monde
 
 
         const CUBE_SIZE = {x: .3, y: .3, z: .3};
@@ -191,6 +190,9 @@ export default class Main{
         cubeBody.position.z = 1;
         cubeBody.quaternion = new CANNON.Quaternion(THREE.Math.degToRad(30), THREE.Math.degToRad(30), THREE.Math.degToRad(30));
 
+        setInterval(()=>{
+            cubeBody.applyLocalImpulse(new CANNON.Vec3(Math.random(), Math.random(), Math.random()), new CANNON.Vec3(0, 1, 0));//premier param force, 2e param point d'impact
+        }, 2000);
 
 
     }
